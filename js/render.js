@@ -168,7 +168,39 @@ const Render = (function () {
     }
   }
 
+  // --- Parçacıklar (görsel efekt) ---
+  let particles = [];
+  let pLast = 0;
+  function burst(x, y, color, count, opts) {
+    opts = opts || {};
+    for (let i = 0; i < count; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const sp = (opts.speed || 120) * (0.4 + Math.random() * 0.6);
+      particles.push({
+        x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - (opts.up || 0),
+        life: opts.life || 0.5, max: opts.life || 0.5, color: color, r: opts.r || 3,
+      });
+    }
+  }
+  function updateParticles(dt) {
+    for (const p of particles) { p.life -= dt; p.vy += 900 * dt; p.x += p.vx * dt; p.y += p.vy * dt; }
+    if (particles.length) particles = particles.filter(p => p.life > 0);
+  }
+  function drawParticles() {
+    for (const p of particles) {
+      ctx.globalAlpha = Math.max(0, p.life / p.max);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
   function draw(world) {
+    const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+    const pdt = pLast ? Math.min(0.05, (now - pLast) / 1000) : 0;
+    pLast = now;
+    updateParticles(pdt);
+
     let cam = world.player.x + world.player.w / 2 - VIEW_W / 2;
     cam = Math.max(0, Math.min(world.width - VIEW_W, cam));
     const tsec = world.time;
@@ -186,8 +218,9 @@ const Render = (function () {
     drawGoal(world.goal, tsec);
     for (const c of world.coins) if (!c.collected) drawCoin(c, tsec);
     drawPlayer(world.player);
+    drawParticles();
     ctx.restore();
   }
 
-  return { init, draw };
+  return { init, draw, burst };
 })();

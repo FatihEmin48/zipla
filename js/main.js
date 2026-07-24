@@ -80,11 +80,12 @@
       stepWorld(world, dt, input);
       // Durum farkından ses olayları
       const pl = world.player;
-      if (world.collected > prev.collected) Sound.play('coin');
-      if (world.stomps > prev.stomps) Sound.play('stomp');
-      if (world.dead && !prev.dead) Sound.play('death');
-      if (world.won && !prev.won) Sound.play('win');
-      if (pl.jumps > prev.jumps) Sound.play('jump');
+      const cx = pl.x + pl.w / 2, cy = pl.y + pl.h / 2, feet = pl.y + pl.h;
+      if (world.collected > prev.collected) { Sound.play('coin'); Render.burst(cx, cy, '#f1c40f', 8, { speed: 140, life: 0.5, r: 3 }); }
+      if (world.stomps > prev.stomps) { Sound.play('stomp'); Render.burst(cx, feet, '#b0413e', 10, { speed: 150, life: 0.4, r: 3 }); }
+      if (world.dead && !prev.dead) { Sound.play('death'); Render.burst(cx, cy, '#4dd0e1', 14, { speed: 190, life: 0.6, r: 3 }); }
+      if (world.won && !prev.won) { Sound.play('win'); Render.burst(cx, cy, '#f1c40f', 20, { speed: 200, life: 0.8, r: 3 }); }
+      if (pl.jumps > prev.jumps) { Sound.play('jump'); Render.burst(cx, feet, '#cdeeff', 5, { speed: 80, up: 40, life: 0.3, r: 2 }); }
       prev.collected = world.collected; prev.stomps = world.stomps;
       prev.dead = world.dead; prev.won = world.won; prev.jumps = pl.jumps;
       if (world.dead) { deaths++; respawn(world); }
