@@ -32,4 +32,4 @@ Saf oyun mantığı (`js/game.js`) DOM/canvas'tan bağımsızdır, bu yüzden No
 
 ## Sonraki sürümler (kapsam dışı)
 
-Daha fazla bölüm, çift zıplama, checkpoint, süre/yıldız derecesi, ses, PWA, tutunma/tırmanma.
+Daha fazla bölüm, çift zıplama, checkpoint, süre/yıldız derecesi, PWA, tutunma/tırmanma.

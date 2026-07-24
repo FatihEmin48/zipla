@@ -21,11 +21,14 @@ body {
 
 header { text-align: center; position: relative; }
 header h1 { margin: 6px 0; font-size: 26px; color: var(--accent); letter-spacing: 1px; }
-#fs-btn {
-  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+#fs-btn, #sound-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
   background: var(--panel2); color: var(--text); border: 1px solid rgba(255,255,255,0.15);
   border-radius: 8px; width: 40px; height: 36px; font-size: 18px; cursor: pointer;
 }
+#fs-btn { right: 4px; }
+#sound-btn { right: 50px; }
+#sound-btn.muted { opacity: 0.5; }
 
 /* --- Telefonu yan çevir uyarısı (yalnız dokunmatik + dikey) --- */
 #rotate-hint { display: none; }

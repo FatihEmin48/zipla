@@ -3,6 +3,7 @@
 (function () {
   let world, prog, paused = false, last = 0, deaths = 0;
   let els = {};
+  let prev = { collected: 0, stomps: 0, dead: false, won: false, onGround: false };
 
   function fmtTime(sec) {
     const m = Math.floor(sec / 60);
@@ -15,6 +16,7 @@
     world = createWorld(i);
     deaths = 0;
     paused = false;
+    prev = { collected: 0, stomps: 0, dead: false, won: false, onGround: false };
     hideOverlay();
     buildLevelBar();
   }
@@ -72,6 +74,15 @@
     if (input.restart && !paused) startLevel(world.level);
     if (!paused) {
       stepWorld(world, dt, input);
+      // Durum farkından ses olayları
+      const pl = world.player;
+      if (world.collected > prev.collected) Sound.play('coin');
+      if (world.stomps > prev.stomps) Sound.play('stomp');
+      if (world.dead && !prev.dead) Sound.play('death');
+      if (world.won && !prev.won) Sound.play('win');
+      if (!pl.onGround && prev.onGround && pl.vy < 0) Sound.play('jump');
+      prev.collected = world.collected; prev.stomps = world.stomps;
+      prev.dead = world.dead; prev.won = world.won; prev.onGround = pl.onGround;
       if (world.dead) { deaths++; respawn(world); }
       if (world.won) onWin();
     }
@@ -95,6 +106,11 @@
     Input.bindButton(document.getElementById('btn-right'), 'right');
     Input.bindButton(document.getElementById('btn-jump'), 'jump');
     document.getElementById('btn-restart').addEventListener('click', () => startLevel(world.level));
+
+    const soundBtn = document.getElementById('sound-btn');
+    const syncSound = () => { const on = Sound.isEnabled(); soundBtn.textContent = on ? '🔊' : '🔇'; soundBtn.classList.toggle('muted', !on); };
+    soundBtn.addEventListener('click', () => { Sound.toggle(); syncSound(); });
+    syncSound();
 
     // Tam ekran + (destekleniyorsa) yatay kilitleme — telefonda yatay oynanış.
     document.getElementById('fs-btn').addEventListener('click', async () => {
