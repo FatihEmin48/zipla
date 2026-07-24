@@ -19,6 +19,16 @@
     prev = { collected: 0, stomps: 0, dead: false, won: false, jumpCount: 0, shields: 0 };
     hideOverlay();
     buildLevelBar();
+    showIntro();
+  }
+
+  let introTimer = null;
+  function showIntro() {
+    if (!els.intro) return;
+    els.intro.textContent = `Bölüm ${world.level + 1} · ${world.name}`;
+    els.intro.classList.add('show');
+    clearTimeout(introTimer);
+    introTimer = setTimeout(() => els.intro.classList.remove('show'), 1400);
   }
 
   function onWin() {
@@ -123,6 +133,7 @@
     els.overlay = document.getElementById('overlay');
     els.levelbar = document.getElementById('levelbar');
     els.progressLine = document.getElementById('progress-line');
+    els.intro = document.getElementById('level-intro');
     els.hudLevel = document.getElementById('hud-level');
     els.hudCoins = document.getElementById('hud-coins');
     els.hudDeaths = document.getElementById('hud-deaths');

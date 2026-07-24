@@ -96,6 +96,14 @@ header h1 { margin: 6px 0; font-size: 26px; color: var(--accent); letter-spacing
   background: rgba(8, 16, 24, 0.82); border-radius: 12px; text-align: center; padding: 16px;
 }
 #overlay.hidden { display: none; }
+
+#level-intro {
+  position: absolute; top: 16%; left: 50%; transform: translateX(-50%) translateY(-6px);
+  background: rgba(8,16,24,0.7); color: var(--accent); font-weight: bold; font-size: 18px;
+  padding: 8px 18px; border-radius: 10px; border: 1px solid rgba(77,208,225,0.4);
+  opacity: 0; pointer-events: none; transition: opacity 0.35s, transform 0.35s;
+}
+#level-intro.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 #overlay h2 { margin: 0 0 6px; color: var(--gold); font-size: 24px; }
 .ov-stat { font-size: 15px; }
 .ov-btns { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
