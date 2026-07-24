@@ -167,16 +167,27 @@ function saveProgress(prog) {
 }
 function unlockedLevel(prog) { return Math.max(0, Math.min(LEVELS.length - 1, (prog && prog.unlocked) | 0)); }
 
-// Bir bölüm bitince ilerlemeyi günceller (sonraki bölümü açar, en iyi süre/coin).
+// Bölüm derecesi 1-3 ⭐: bitirme (1) + tüm coinler (1) + hedef süre (par) altı (1).
+function levelStars(levelIndex, time, coins, totalCoins) {
+  const par = (LEVELS[levelIndex] && LEVELS[levelIndex].par) || 30;
+  let s = 1;
+  if (totalCoins > 0 && coins >= totalCoins) s += 1;
+  if (time <= par) s += 1;
+  return s;
+}
+
+// Bir bölüm bitince ilerlemeyi günceller (sonraki bölümü açar; en iyi süre,
+// en çok coin ve en yüksek yıldız kalıcı tutulur).
 function recordWin(world, prog) {
   prog = prog || {};
   const i = world.level;
   const next = Math.min(LEVELS.length - 1, i + 1);
   prog.unlocked = Math.max(unlockedLevel(prog), next);
   prog.best = prog.best || {};
-  const prev = prog.best[i];
-  const result = { time: world.time, coins: world.collected };
-  if (!prev || world.time < prev.time) prog.best[i] = result;
-  else if (world.collected > (prev.coins || 0)) prog.best[i].coins = world.collected;
+  const b = prog.best[i] || {};
+  b.time = (b.time == null) ? world.time : Math.min(b.time, world.time);
+  b.coins = Math.max(b.coins || 0, world.collected);
+  b.stars = Math.max(b.stars || 0, levelStars(i, world.time, world.collected, world.totalCoins));
+  prog.best[i] = b;
   return prog;
 }

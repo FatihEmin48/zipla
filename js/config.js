@@ -28,6 +28,7 @@ const STOMP_BOUNCE = -420;    // düşmana basınca zıplama sekmesi
 const LEVELS = [
   {
     name: 'Başlangıç',
+    par: 18,
     width: 1600, height: 384,
     spawn: [40, 300],
     goal: [1520, 296],
@@ -41,6 +42,7 @@ const LEVELS = [
   },
   {
     name: 'Sıçrayış',
+    par: 26,
     width: 1800, height: 384,
     spawn: [40, 300],
     goal: [1720, 296],
@@ -55,6 +57,7 @@ const LEVELS = [
   },
   {
     name: 'Yükseliş',
+    par: 24,
     width: 1500, height: 384,
     spawn: [40, 300],
     goal: [1400, 62],

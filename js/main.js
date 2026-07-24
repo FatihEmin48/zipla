@@ -28,12 +28,15 @@
     buildLevelBar();
     const hasNext = world.level < LEVELS.length - 1;
     const best = prog.best[world.level];
+    const par = LEVELS[world.level].par;
+    const stars = levelStars(world.level, world.time, world.collected, world.totalCoins);
     showOverlay(
       `<h2>🏁 Bölüm Tamam!</h2>` +
-      `<div class="ov-stat">⏱️ Süre: <b>${fmtTime(world.time)}</b></div>` +
-      `<div class="ov-stat">🪙 Coin: <b>${world.collected}/${world.totalCoins}</b></div>` +
+      `<div class="ov-stars">${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}</div>` +
+      `<div class="ov-stat">⏱️ Süre: <b>${fmtTime(world.time)}</b> · hedef ${par}s ${world.time <= par ? '✓' : '✗'}</div>` +
+      `<div class="ov-stat">🪙 Coin: <b>${world.collected}/${world.totalCoins}</b> ${world.collected >= world.totalCoins ? '✓' : ''}</div>` +
       `<div class="ov-stat">🥾 Düşman: <b>${world.stomps}</b></div>` +
-      `<div class="ov-stat">🏆 En iyi: <b>${fmtTime(best.time)}</b></div>` +
+      `<div class="ov-stat">🏆 En iyi: <b>${fmtTime(best.time)}</b> · ${'★'.repeat(best.stars || 0)}</div>` +
       `<div class="ov-btns">` +
       (hasNext ? `<button id="ov-next" class="ov-btn">Sonraki ▶</button>` : `<button id="ov-next" class="ov-btn">🎉 Bitti — Baştan</button>`) +
       `<button id="ov-replay" class="ov-btn ghost">Tekrar</button>` +
@@ -54,7 +57,8 @@
     for (let i = 0; i < LEVELS.length; i++) {
       const b = document.createElement('button');
       b.className = 'lvl-btn' + (world && world.level === i ? ' cur' : '') + (i > unlocked ? ' locked' : '');
-      b.textContent = i > unlocked ? '🔒' : (i + 1);
+      const bi = prog.best && prog.best[i];
+      b.innerHTML = i > unlocked ? '🔒' : `${i + 1}` + (bi && bi.stars ? `<span class="lvl-stars">${'★'.repeat(bi.stars)}</span>` : '');
       if (i <= unlocked) b.addEventListener('click', () => startLevel(i));
       els.levelbar.appendChild(b);
     }

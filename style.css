@@ -63,12 +63,14 @@ header h1 { margin: 6px 0; font-size: 26px; color: var(--accent); letter-spacing
 
 #levelbar { display: flex; gap: 6px; justify-content: center; margin: 6px 0; flex-wrap: wrap; }
 .lvl-btn {
-  width: 34px; height: 34px; border-radius: 8px; cursor: pointer;
+  min-width: 34px; min-height: 34px; padding: 2px 4px; border-radius: 8px; cursor: pointer;
   background: var(--panel2); color: var(--text); border: 1px solid rgba(255,255,255,0.12);
-  font-weight: bold; font-size: 14px;
+  font-weight: bold; font-size: 14px; line-height: 1.1;
 }
 .lvl-btn.cur { border-color: var(--accent); color: var(--accent); }
 .lvl-btn.locked { opacity: 0.5; cursor: default; }
+.lvl-stars { display: block; font-size: 9px; color: var(--gold); letter-spacing: -1px; }
+.ov-stars { font-size: 34px; color: var(--gold); letter-spacing: 4px; margin-bottom: 4px; }
 
 #hud {
   display: flex; justify-content: space-between; gap: 8px;
