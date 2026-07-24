@@ -17,6 +17,7 @@ function createWorld(levelIndex) {
     width: L.width,
     height: L.height,
     platforms: L.platforms.map(t => ({ x: t[0], y: t[1], w: t[2], h: t[3] })),
+    hazards: (L.hazards || []).map(t => ({ x: t[0], y: t[1], w: t[2], h: t[3] })),
     coins: L.coins.map(c => ({ x: c[0], y: c[1], w: COIN, h: COIN, collected: false })),
     goal: { x: L.goal[0], y: L.goal[1], w: GOAL_W, h: GOAL_H },
     player: { x: L.spawn[0], y: L.spawn[1], vx: 0, vy: 0, w: PLAYER_W, h: PLAYER_H, onGround: false, facing: 1 },
@@ -87,7 +88,10 @@ function stepWorld(world, dt, input) {
     if (!c.collected && aabb(p, c)) { c.collected = true; world.collected += 1; }
   }
 
-  if (aabb(p, world.goal)) world.won = true;
+  // Tehlikeye (diken vb.) değme → ölüm.
+  for (const h of world.hazards) { if (aabb(p, h)) { world.dead = true; break; } }
+
+  if (aabb(p, world.goal) && !world.dead) world.won = true;
 
   // Bölüm altına düşme → ölüm.
   if (p.y > world.height + 80) world.dead = true;

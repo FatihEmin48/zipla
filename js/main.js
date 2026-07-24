@@ -60,6 +60,7 @@
   function updateHUD() {
     els.hudLevel.textContent = `Bölüm ${world.level + 1} · ${world.name}`;
     els.hudCoins.textContent = `🪙 ${world.collected}/${world.totalCoins}`;
+    els.hudDeaths.textContent = `☠️ ${deaths}`;
     els.hudTime.textContent = `⏱️ ${fmtTime(world.time)}`;
   }
 
@@ -84,6 +85,7 @@
     els.levelbar = document.getElementById('levelbar');
     els.hudLevel = document.getElementById('hud-level');
     els.hudCoins = document.getElementById('hud-coins');
+    els.hudDeaths = document.getElementById('hud-deaths');
     els.hudTime = document.getElementById('hud-time');
 
     Render.init(els.canvas);

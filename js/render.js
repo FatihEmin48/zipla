@@ -49,6 +49,28 @@ const Render = (function () {
     ctx.fillRect(t.x, t.y + t.h - 4, t.w, 4);
   }
 
+  function drawHazard(h) {
+    const n = Math.max(1, Math.round(h.w / 16));
+    const sw = h.w / n;
+    for (let i = 0; i < n; i++) {
+      const x = h.x + i * sw;
+      ctx.fillStyle = '#9aa7b3';
+      ctx.beginPath();
+      ctx.moveTo(x, h.y + h.h);
+      ctx.lineTo(x + sw / 2, h.y);
+      ctx.lineTo(x + sw, h.y + h.h);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.beginPath();
+      ctx.moveTo(x + sw / 2, h.y);
+      ctx.lineTo(x + sw / 2 + 2, h.y + h.h);
+      ctx.lineTo(x + sw / 2, h.y + h.h);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+
   function drawCoin(c, tsec) {
     const cx = c.x + c.w / 2, cy = c.y + c.h / 2;
     const bob = Math.sin(tsec * 4 + c.x * 0.05) * 2;
@@ -110,6 +132,7 @@ const Render = (function () {
     ctx.save();
     ctx.translate(-Math.round(cam), 0);
     for (const t of world.platforms) drawPlatform(t);
+    for (const h of world.hazards) drawHazard(h);
     drawGoal(world.goal, tsec);
     for (const c of world.coins) if (!c.collected) drawCoin(c, tsec);
     drawPlayer(world.player);
