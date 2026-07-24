@@ -19,8 +19,44 @@ body {
 }
 #app { max-width: 680px; margin: 0 auto; padding: 10px 10px 30px; }
 
-header { text-align: center; }
+header { text-align: center; position: relative; }
 header h1 { margin: 6px 0; font-size: 26px; color: var(--accent); letter-spacing: 1px; }
+#fs-btn {
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  background: var(--panel2); color: var(--text); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px; width: 40px; height: 36px; font-size: 18px; cursor: pointer;
+}
+
+/* --- Telefonu yan çevir uyarısı (yalnız dokunmatik + dikey) --- */
+#rotate-hint { display: none; }
+.rot-emoji { font-size: 64px; animation: rotwiggle 1.6s ease-in-out infinite; }
+@keyframes rotwiggle { 0%,100% { transform: rotate(-18deg); } 50% { transform: rotate(72deg); } }
+@media (orientation: portrait) and (pointer: coarse) {
+  #rotate-hint {
+    display: flex; position: fixed; inset: 0; z-index: 9999;
+    flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+    background: #0d151d; color: var(--text); text-align: center; padding: 24px;
+  }
+  #rotate-hint p { font-size: 20px; line-height: 1.6; }
+  #rotate-hint small { color: var(--muted); font-size: 14px; }
+}
+
+/* --- Yatay (telefon) düzeni: dikey alan az, canvas'ı boya ölçekle + kontrolleri köşelere al --- */
+@media (orientation: landscape) and (max-height: 560px) {
+  #app { padding: 4px 8px; max-width: none; }
+  header h1 { font-size: 18px; margin: 2px 0; }
+  #levelbar { margin: 2px 0; }
+  .hint, footer { display: none; }
+  #hud { padding: 4px 10px; font-size: 12px; margin: 4px 0; }
+  #stage { display: flex; justify-content: center; }
+  #game { height: 74vh; width: auto; max-width: 100%; }
+  #touch {
+    position: fixed; bottom: 10px; left: 10px; right: 10px; margin: 0;
+    justify-content: space-between; pointer-events: none; z-index: 60;
+  }
+  #touch .pad { pointer-events: auto; }
+  .tbtn { opacity: 0.9; }
+}
 
 #levelbar { display: flex; gap: 6px; justify-content: center; margin: 6px 0; flex-wrap: wrap; }
 .lvl-btn {

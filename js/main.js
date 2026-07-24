@@ -95,6 +95,15 @@
     Input.bindButton(document.getElementById('btn-jump'), 'jump');
     document.getElementById('btn-restart').addEventListener('click', () => startLevel(world.level));
 
+    // Tam ekran + (destekleniyorsa) yatay kilitleme — telefonda yatay oynanış.
+    document.getElementById('fs-btn').addEventListener('click', async () => {
+      try {
+        const el = document.documentElement;
+        if (!document.fullscreenElement && el.requestFullscreen) await el.requestFullscreen();
+        if (screen.orientation && screen.orientation.lock) { try { await screen.orientation.lock('landscape'); } catch (e) { /* iOS vb. desteklemez */ } }
+      } catch (e) { /* yok */ }
+    });
+
     prog = loadProgress();
     startLevel(unlockedLevel(prog));
 
