@@ -18,6 +18,11 @@ function createWorld(levelIndex) {
     height: L.height,
     platforms: L.platforms.map(t => ({ x: t[0], y: t[1], w: t[2], h: t[3] })),
     hazards: (L.hazards || []).map(t => ({ x: t[0], y: t[1], w: t[2], h: t[3] })),
+    movers: (L.movers || []).map(m => ({
+      bx: m.x, by: m.y, x: m.x, y: m.y, w: m.w, h: m.h,
+      axis: m.axis || 'x', amp: m.amp, speed: m.speed,
+      off: 0, dir: 1, dx: 0, dy: 0,
+    })),
     coins: L.coins.map(c => ({ x: c[0], y: c[1], w: COIN, h: COIN, collected: false })),
     goal: { x: L.goal[0], y: L.goal[1], w: GOAL_W, h: GOAL_H },
     player: { x: L.spawn[0], y: L.spawn[1], vx: 0, vy: 0, w: PLAYER_W, h: PLAYER_H, onGround: false, facing: 1 },
@@ -30,17 +35,23 @@ function createWorld(levelIndex) {
   };
 }
 
+// Tüm katı zeminler (sabit platformlar + hareketli platformlar) üzerinde gez.
+function eachSolid(world, fn) {
+  for (const t of world.platforms) fn(t);
+  if (world.movers) for (const m of world.movers) fn(m);
+}
+
 // Yatay hareket + çarpışma çözümü (eksen ayrık AABB).
 function moveX(world, dx) {
   const p = world.player;
   p.x += dx;
-  for (const t of world.platforms) {
+  eachSolid(world, (t) => {
     if (aabb(p, t)) {
       if (dx > 0) p.x = t.x - p.w;
       else if (dx < 0) p.x = t.x + t.w;
       p.vx = 0;
     }
-  }
+  });
   if (p.x < 0) p.x = 0;
   if (p.x + p.w > world.width) p.x = world.width - p.w;
 }
@@ -50,12 +61,30 @@ function moveY(world, dy) {
   const p = world.player;
   p.y += dy;
   p.onGround = false;
-  for (const t of world.platforms) {
+  eachSolid(world, (t) => {
     if (aabb(p, t)) {
       if (dy > 0) { p.y = t.y - p.h; p.onGround = true; }
       else if (dy < 0) { p.y = t.y + t.h; }
       p.vy = 0;
     }
+  });
+}
+
+// Hareketli platformları güncelle; oyuncu üstündeyse onunla birlikte taşı.
+function updateMovers(world, dt) {
+  if (!world.movers || !world.movers.length) return;
+  const p = world.player;
+  for (const m of world.movers) {
+    const ox = m.x, oy = m.y;
+    m.off += m.speed * dt * m.dir;
+    if (m.off >= m.amp) { m.off = m.amp; m.dir = -1; }
+    else if (m.off <= 0) { m.off = 0; m.dir = 1; }
+    m.x = m.bx + (m.axis === 'x' ? m.off : 0);
+    m.y = m.by + (m.axis === 'y' ? m.off : 0);
+    m.dx = m.x - ox; m.dy = m.y - oy;
+    // Oyuncu bu platformun (eski konumdaki) üstünde duruyorsa birlikte taşınır.
+    const onTop = p.x < ox + m.w && p.x + p.w > ox && Math.abs((p.y + p.h) - oy) <= 4;
+    if (onTop) { p.x += m.dx; p.y += m.dy; }
   }
 }
 
@@ -71,6 +100,8 @@ function respawn(world) {
 function stepWorld(world, dt, input) {
   if (world.won || world.dead) return;
   const p = world.player;
+
+  updateMovers(world, dt);
 
   const dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
   p.vx = dir * MOVE_SPEED;

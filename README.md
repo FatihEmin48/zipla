@@ -30,4 +30,4 @@ Saf oyun mantığı (`js/game.js`) DOM/canvas'tan bağımsızdır, bu yüzden No
 
 ## Sonraki sürümler (kapsam dışı)
 
-Daha fazla bölüm, düşmanlar (üstüne zıplama), hareketli platformlar, çift zıplama, checkpoint, süre/yıldız derecesi, ses, PWA.
+Daha fazla bölüm, düşmanlar (üstüne zıplama), çift zıplama, checkpoint, süre/yıldız derecesi, ses, PWA, tutunma/tırmanma.
