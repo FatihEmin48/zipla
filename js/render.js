@@ -23,6 +23,27 @@ const Render = (function () {
     ctx.fillRect(0, 0, VIEW_W, VIEW_H);
   }
 
+  function hills(offset, baseY, r, step, color) {
+    ctx.fillStyle = color;
+    for (let x = -(((offset % step) + step) % step) - step; x < VIEW_W + step; x += step) {
+      ctx.beginPath();
+      ctx.arc(x, baseY, r, Math.PI, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillRect(0, baseY, VIEW_W, VIEW_H - baseY);
+  }
+
+  function drawScenery(cam) {
+    // güneş
+    ctx.fillStyle = 'rgba(255,244,200,0.9)';
+    ctx.beginPath(); ctx.arc(VIEW_W - 70, 66, 32, 0, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(255,250,225,0.35)';
+    ctx.beginPath(); ctx.arc(VIEW_W - 70, 66, 44, 0, 7); ctx.fill();
+    // tepeler (iki katman, parallax)
+    hills(cam * 0.12, 300, 90, 150, '#bfe3b0');
+    hills(cam * 0.22 + 80, 322, 120, 190, '#a4d492');
+  }
+
   function drawClouds(cam) {
     ctx.fillStyle = 'rgba(255,255,255,0.85)';
     const clouds = [[120, 70], [420, 110], [760, 60], [1050, 120], [1380, 80], [1680, 100]];
@@ -258,6 +279,7 @@ const Render = (function () {
     const tsec = world.time;
 
     drawSky();
+    drawScenery(cam);
     drawClouds(cam);
 
     ctx.save();
