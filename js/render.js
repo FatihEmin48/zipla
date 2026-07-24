@@ -63,11 +63,18 @@ const Render = (function () {
 
   function drawEnemy(e) {
     if (!e.alive) return;
-    ctx.fillStyle = '#b0413e';
+    const flyer = e.type === 'flyer';
+    if (flyer) {
+      const wy = e.y + e.h * 0.4;
+      const flap = Math.sin(Date.now() / 90) * 4;
+      ctx.fillStyle = '#c9a6f0';
+      ctx.beginPath(); ctx.moveTo(e.x, wy); ctx.lineTo(e.x - 10, wy - 6 - flap); ctx.lineTo(e.x, wy + 5); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(e.x + e.w, wy); ctx.lineTo(e.x + e.w + 10, wy - 6 - flap); ctx.lineTo(e.x + e.w, wy + 5); ctx.closePath(); ctx.fill();
+    }
+    ctx.fillStyle = flyer ? '#8e5fd0' : '#b0413e';
     roundRect(e.x, e.y, e.w, e.h, 6);
     ctx.fill();
-    ctx.fillStyle = '#7d2a28';
-    ctx.fillRect(e.x + 2, e.y + e.h - 4, e.w - 4, 4);
+    if (!flyer) { ctx.fillStyle = '#7d2a28'; ctx.fillRect(e.x + 2, e.y + e.h - 4, e.w - 4, 4); }
     for (let i = 0; i < 2; i++) {
       const gx = i === 0 ? e.x + 8 : e.x + e.w - 8;
       ctx.fillStyle = '#fff';

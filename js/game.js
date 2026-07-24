@@ -26,6 +26,7 @@ function createWorld(levelIndex) {
     enemies: (L.enemies || []).map(e => ({
       bx: e.x, by: e.y, x: e.x, y: e.y, w: e.w, h: e.h,
       range: e.range, speed: e.speed, off: 0, dir: 1, alive: true, facing: -1,
+      type: e.type || 'walker',
     })),
     coins: L.coins.map(c => ({ x: c[0], y: c[1], w: COIN, h: COIN, collected: false })),
     goal: { x: L.goal[0], y: L.goal[1], w: GOAL_W, h: GOAL_H },
@@ -115,6 +116,8 @@ function updateEnemies(world, dt) {
     if (e.off >= e.range) { e.off = e.range; e.dir = -1; }
     else if (e.off <= 0) { e.off = 0; e.dir = 1; }
     e.x = e.bx + e.off;
+    // Uçan düşman dikeyde de hafif sallanır.
+    if (e.type === 'flyer') e.y = e.by + Math.sin((world.time || 0) * 3 + e.bx * 0.02) * 12;
     e.facing = e.dir;
     if (aabb(p, e)) {
       const stomp = p.vy > 0 && (p.y + p.h) <= e.y + e.h * 0.6;

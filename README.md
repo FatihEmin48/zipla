@@ -11,7 +11,7 @@ Tarayıcıda oynanan bir **2D platform** oyunu. Koş, zıpla, coin'leri topla ve
 - **Klavye:** `←` `→` (ya da `A` `D`) hareket · `Boşluk` / `↑` / `W` zıpla — havadayken bir kez daha basarsan **çift zıplama** · `R` bölümü yeniden başlat.
 - **Dokunmatik:** alttaki ◀ ▶ ve **ZIPLA** butonları.
 - Her bölümde **coin'leri topla** ve 🚩 **bitiş bayrağına** ulaş. Boşluğa düşersen ya da **dikenlere** ⚠️ değersen başa dönersin (ölüm sayısı üstte gösterilir).
-- **Düşmanlar** 👹 devriye gezer: **üstüne zıplarsan** onları yener ve sekersin; **yandan** değersen ölürsün.
+- **Düşmanlar** 👹 devriye gezer (yürüyen + havada süzülen **uçan** tür): **üstüne zıplarsan** onları yener ve sekersin; **yandan** değersen ölürsün.
 - **Hareketli platformlar** üstünde durursan seninle taşınır.
 - **Checkpoint** 🚩 çizgisini geçersen, sonra ölürsen başa değil oraya dönersin (uzun bölümlerde işine yarar).
 - Bölümü bitirince **1-3 ⭐ yıldız** kazanırsın: bitirme (1) + tüm coin'leri toplama (1) + hedef sürenin altında kalma (1). En iyi süren, coin'in ve yıldızın kaydedilir; **sonraki bölüm** açılır. Üstteki numaralardan açık bölümlere geçebilir, yıldızlarını görebilirsin.
