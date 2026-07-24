@@ -250,9 +250,20 @@ function levelStars(levelIndex, time, coins, totalCoins) {
   return s;
 }
 
+// Bölüm puanı: coin + düşman + hız bonusu + ölümsüz bonusu − ölüm cezası.
+function levelScore(levelIndex, time, coins, stomps, deaths) {
+  deaths = deaths || 0;
+  const par = (LEVELS[levelIndex] && LEVELS[levelIndex].par) || 30;
+  let s = coins * 100 + stomps * 150;
+  s += Math.max(0, Math.round((par - time) * 25)); // hız bonusu
+  if (deaths === 0) s += 500;                       // ölümsüz bonusu
+  s -= deaths * 60;                                 // ölüm cezası
+  return Math.max(0, Math.round(s));
+}
+
 // Bir bölüm bitince ilerlemeyi günceller (sonraki bölümü açar; en iyi süre,
-// en çok coin ve en yüksek yıldız kalıcı tutulur).
-function recordWin(world, prog) {
+// en çok coin, en yüksek yıldız ve en yüksek puan kalıcı tutulur).
+function recordWin(world, prog, deaths) {
   prog = prog || {};
   const i = world.level;
   const next = Math.min(LEVELS.length - 1, i + 1);
@@ -262,6 +273,7 @@ function recordWin(world, prog) {
   b.time = (b.time == null) ? world.time : Math.min(b.time, world.time);
   b.coins = Math.max(b.coins || 0, world.collected);
   b.stars = Math.max(b.stars || 0, levelStars(i, world.time, world.collected, world.totalCoins));
+  b.score = Math.max(b.score || 0, levelScore(i, world.time, world.collected, world.stomps, deaths));
   prog.best[i] = b;
   return prog;
 }

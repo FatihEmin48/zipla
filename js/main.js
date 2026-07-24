@@ -23,7 +23,7 @@
 
   function onWin() {
     paused = true;
-    prog = recordWin(world, prog);
+    prog = recordWin(world, prog, deaths);
     saveProgress(prog);
     buildLevelBar();
     const hasNext = world.level < LEVELS.length - 1;
@@ -37,8 +37,9 @@
       (allDone ? `<div class="ov-done">🏆 Tüm bölümleri bitirdin! ⭐ ${totalStars()}/${3 * LEVELS.length}</div>` : '') +
       `<div class="ov-stat">⏱️ Süre: <b>${fmtTime(world.time)}</b> · hedef ${par}s ${world.time <= par ? '✓' : '✗'}</div>` +
       `<div class="ov-stat">🪙 Coin: <b>${world.collected}/${world.totalCoins}</b> ${world.collected >= world.totalCoins ? '✓' : ''}</div>` +
-      `<div class="ov-stat">🥾 Düşman: <b>${world.stomps}</b></div>` +
-      `<div class="ov-stat">🏆 En iyi: <b>${fmtTime(best.time)}</b> · ${'★'.repeat(best.stars || 0)}</div>` +
+      `<div class="ov-stat">🥾 Düşman: <b>${world.stomps}</b> · ☠️ ${deaths}</div>` +
+      `<div class="ov-stat">🏅 Puan: <b>${levelScore(world.level, world.time, world.collected, world.stomps, deaths)}</b> · en iyi ${best.score || 0}</div>` +
+      `<div class="ov-stat">🏆 En iyi süre: <b>${fmtTime(best.time)}</b> · ${'★'.repeat(best.stars || 0)}</div>` +
       `<div class="ov-btns">` +
       (hasNext ? `<button id="ov-next" class="ov-btn">Sonraki ▶</button>` : `<button id="ov-next" class="ov-btn">🎉 Bitti — Baştan</button>`) +
       `<button id="ov-replay" class="ov-btn ghost">Tekrar</button>` +
