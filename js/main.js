@@ -30,6 +30,7 @@
       `<h2>🏁 Bölüm Tamam!</h2>` +
       `<div class="ov-stat">⏱️ Süre: <b>${fmtTime(world.time)}</b></div>` +
       `<div class="ov-stat">🪙 Coin: <b>${world.collected}/${world.totalCoins}</b></div>` +
+      `<div class="ov-stat">🥾 Düşman: <b>${world.stomps}</b></div>` +
       `<div class="ov-stat">🏆 En iyi: <b>${fmtTime(best.time)}</b></div>` +
       `<div class="ov-btns">` +
       (hasNext ? `<button id="ov-next" class="ov-btn">Sonraki ▶</button>` : `<button id="ov-next" class="ov-btn">🎉 Bitti — Baştan</button>`) +

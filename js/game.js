@@ -23,6 +23,10 @@ function createWorld(levelIndex) {
       axis: m.axis || 'x', amp: m.amp, speed: m.speed,
       off: 0, dir: 1, dx: 0, dy: 0,
     })),
+    enemies: (L.enemies || []).map(e => ({
+      bx: e.x, by: e.y, x: e.x, y: e.y, w: e.w, h: e.h,
+      range: e.range, speed: e.speed, off: 0, dir: 1, alive: true, facing: -1,
+    })),
     coins: L.coins.map(c => ({ x: c[0], y: c[1], w: COIN, h: COIN, collected: false })),
     goal: { x: L.goal[0], y: L.goal[1], w: GOAL_W, h: GOAL_H },
     player: { x: L.spawn[0], y: L.spawn[1], vx: 0, vy: 0, w: PLAYER_W, h: PLAYER_H, onGround: false, facing: 1 },
@@ -31,6 +35,7 @@ function createWorld(levelIndex) {
     dead: false,
     time: 0,
     collected: 0,
+    stomps: 0,
     totalCoins: L.coins.length,
   };
 }
@@ -96,6 +101,26 @@ function respawn(world) {
   world.dead = false;
 }
 
+// Düşmanları güncelle (devriye) + oyuncu çarpışması: üstüne basılırsa yenilir
+// (zıplama sekmesi), yandan/alttan değilirse oyuncu ölür.
+function updateEnemies(world, dt) {
+  if (!world.enemies || !world.enemies.length) return;
+  const p = world.player;
+  for (const e of world.enemies) {
+    if (!e.alive) continue;
+    e.off += e.speed * dt * e.dir;
+    if (e.off >= e.range) { e.off = e.range; e.dir = -1; }
+    else if (e.off <= 0) { e.off = 0; e.dir = 1; }
+    e.x = e.bx + e.off;
+    e.facing = e.dir;
+    if (aabb(p, e)) {
+      const stomp = p.vy > 0 && (p.y + p.h) <= e.y + e.h * 0.6;
+      if (stomp) { e.alive = false; p.vy = STOMP_BOUNCE; p.onGround = false; world.stomps += 1; }
+      else { world.dead = true; }
+    }
+  }
+}
+
 // Bir fizik adımı. input: { left, right, jump } (jump = bu adımda zıplama isteği).
 function stepWorld(world, dt, input) {
   if (world.won || world.dead) return;
@@ -118,6 +143,8 @@ function stepWorld(world, dt, input) {
   for (const c of world.coins) {
     if (!c.collected && aabb(p, c)) { c.collected = true; world.collected += 1; }
   }
+
+  updateEnemies(world, dt);
 
   // Tehlikeye (diken vb.) değme → ölüm.
   for (const h of world.hazards) { if (aabb(p, h)) { world.dead = true; break; } }

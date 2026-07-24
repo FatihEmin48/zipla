@@ -61,6 +61,28 @@ const Render = (function () {
     ctx.beginPath(); ctx.arc(m.x + m.w - 6, m.y + m.h / 2, 2, 0, 7); ctx.fill();
   }
 
+  function drawEnemy(e) {
+    if (!e.alive) return;
+    ctx.fillStyle = '#b0413e';
+    roundRect(e.x, e.y, e.w, e.h, 6);
+    ctx.fill();
+    ctx.fillStyle = '#7d2a28';
+    ctx.fillRect(e.x + 2, e.y + e.h - 4, e.w - 4, 4);
+    for (let i = 0; i < 2; i++) {
+      const gx = i === 0 ? e.x + 8 : e.x + e.w - 8;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(gx, e.y + 12, 3.5, 0, 7); ctx.fill();
+      ctx.fillStyle = '#1a0b0b';
+      ctx.beginPath(); ctx.arc(gx + (e.facing > 0 ? 1 : -1), e.y + 12, 1.8, 0, 7); ctx.fill();
+    }
+    ctx.strokeStyle = '#1a0b0b';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(e.x + 4, e.y + 5); ctx.lineTo(e.x + 12, e.y + 8);
+    ctx.moveTo(e.x + e.w - 4, e.y + 5); ctx.lineTo(e.x + e.w - 12, e.y + 8);
+    ctx.stroke();
+  }
+
   function drawHazard(h) {
     const n = Math.max(1, Math.round(h.w / 16));
     const sw = h.w / n;
@@ -146,6 +168,7 @@ const Render = (function () {
     for (const t of world.platforms) drawPlatform(t);
     if (world.movers) for (const m of world.movers) drawMover(m);
     for (const h of world.hazards) drawHazard(h);
+    if (world.enemies) for (const e of world.enemies) drawEnemy(e);
     drawGoal(world.goal, tsec);
     for (const c of world.coins) if (!c.collected) drawCoin(c, tsec);
     drawPlayer(world.player);
