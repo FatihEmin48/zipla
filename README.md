@@ -13,6 +13,7 @@ Tarayıcıda oynanan bir **2D platform** oyunu. Koş, zıpla, coin'leri topla ve
 - Her bölümde **coin'leri topla** ve 🚩 **bitiş bayrağına** ulaş. Boşluğa düşersen ya da **dikenlere** ⚠️ değersen başa dönersin (ölüm sayısı üstte gösterilir).
 - **Düşmanlar** 👹 devriye gezer: **üstüne zıplarsan** onları yener ve sekersin; **yandan** değersen ölürsün.
 - **Hareketli platformlar** üstünde durursan seninle taşınır.
+- **Checkpoint** 🚩 çizgisini geçersen, sonra ölürsen başa değil oraya dönersin (uzun bölümlerde işine yarar).
 - Bölümü bitirince **1-3 ⭐ yıldız** kazanırsın: bitirme (1) + tüm coin'leri toplama (1) + hedef sürenin altında kalma (1). En iyi süren, coin'in ve yıldızın kaydedilir; **sonraki bölüm** açılır. Üstteki numaralardan açık bölümlere geçebilir, yıldızlarını görebilirsin.
 - İlerleme otomatik kaydedilir (localStorage).
 
@@ -34,4 +35,4 @@ Saf oyun mantığı (`js/game.js`) DOM/canvas'tan bağımsızdır, bu yüzden No
 
 ## Sonraki sürümler (kapsam dışı)
 
-Daha fazla bölüm, checkpoint, tutunma/tırmanma.
+Daha fazla bölüm, tutunma/tırmanma, farklı düşman türleri, arka plan müziği.

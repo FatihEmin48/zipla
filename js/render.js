@@ -121,6 +121,19 @@ const Render = (function () {
     ctx.fill();
   }
 
+  function drawCheckpoint(cp) {
+    const x = cp.x, top = 296, bot = 352;
+    ctx.fillStyle = '#c9d2da';
+    ctx.fillRect(x, top, 3, bot - top);
+    ctx.fillStyle = cp.active ? '#5aa93f' : '#8a97a3';
+    ctx.beginPath();
+    ctx.moveTo(x + 3, top + 2);
+    ctx.lineTo(x + 3 + 18, top + 9);
+    ctx.lineTo(x + 3, top + 16);
+    ctx.closePath();
+    ctx.fill();
+  }
+
   function drawGoal(g, tsec) {
     ctx.fillStyle = '#e6e6e6';
     ctx.fillRect(g.x, g.y, 4, g.h);
@@ -168,6 +181,7 @@ const Render = (function () {
     for (const t of world.platforms) drawPlatform(t);
     if (world.movers) for (const m of world.movers) drawMover(m);
     for (const h of world.hazards) drawHazard(h);
+    if (world.checkpoints) for (const cp of world.checkpoints) drawCheckpoint(cp);
     if (world.enemies) for (const e of world.enemies) drawEnemy(e);
     drawGoal(world.goal, tsec);
     for (const c of world.coins) if (!c.collected) drawCoin(c, tsec);

@@ -31,6 +31,8 @@ function createWorld(levelIndex) {
     goal: { x: L.goal[0], y: L.goal[1], w: GOAL_W, h: GOAL_H },
     player: { x: L.spawn[0], y: L.spawn[1], vx: 0, vy: 0, w: PLAYER_W, h: PLAYER_H, onGround: false, facing: 1, jumps: 0 },
     spawn: { x: L.spawn[0], y: L.spawn[1] },
+    checkpoints: (L.checkpoints || []).map(x => ({ x: x, active: false })),
+    checkpoint: { x: L.spawn[0], y: L.spawn[1] }, // aktif yeniden doğuş noktası
     won: false,
     dead: false,
     time: 0,
@@ -93,11 +95,12 @@ function updateMovers(world, dt) {
   }
 }
 
-// Oyuncuyu başlangıca (ya da checkpoint'e) döndürür.
+// Oyuncuyu son aktif checkpoint'e (yoksa başlangıca) döndürür.
 function respawn(world) {
   const p = world.player;
-  p.x = world.spawn.x; p.y = world.spawn.y;
-  p.vx = 0; p.vy = 0; p.onGround = false;
+  const cp = world.checkpoint || world.spawn;
+  p.x = cp.x; p.y = cp.y;
+  p.vx = 0; p.vy = 0; p.onGround = false; p.jumps = 0;
   world.dead = false;
 }
 
@@ -150,6 +153,13 @@ function stepWorld(world, dt, input) {
 
   // Tehlikeye (diken vb.) değme → ölüm.
   for (const h of world.hazards) { if (aabb(p, h)) { world.dead = true; break; } }
+
+  // Checkpoint çizgisini geçince aktifleşir (yeniden doğuş noktası ilerler).
+  if (world.checkpoints) {
+    for (const cp of world.checkpoints) {
+      if (!cp.active && p.x >= cp.x) { cp.active = true; world.checkpoint = { x: cp.x, y: world.spawn.y }; }
+    }
+  }
 
   if (aabb(p, world.goal) && !world.dead) world.won = true;
 
