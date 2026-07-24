@@ -30,7 +30,8 @@ function createWorld(levelIndex) {
     })),
     coins: L.coins.map(c => ({ x: c[0], y: c[1], w: COIN, h: COIN, collected: false })),
     goal: { x: L.goal[0], y: L.goal[1], w: GOAL_W, h: GOAL_H },
-    player: { x: L.spawn[0], y: L.spawn[1], vx: 0, vy: 0, w: PLAYER_W, h: PLAYER_H, onGround: false, facing: 1, jumps: 0, jumpBuffer: 0 },
+    player: { x: L.spawn[0], y: L.spawn[1], vx: 0, vy: 0, w: PLAYER_W, h: PLAYER_H, onGround: false, facing: 1, jumps: 0, jumpBuffer: 0, touchingWall: false, wallSide: 0, wallKick: 0, wallKickTime: 0 },
+    jumpCount: 0,
     spawn: { x: L.spawn[0], y: L.spawn[1] },
     checkpoints: (L.checkpoints || []).map(x => ({ x: x, active: false })),
     checkpoint: { x: L.spawn[0], y: L.spawn[1] }, // aktif yeniden doğuş noktası
@@ -53,10 +54,11 @@ function eachSolid(world, fn) {
 function moveX(world, dx) {
   const p = world.player;
   p.x += dx;
+  p.touchingWall = false;
   eachSolid(world, (t) => {
     if (aabb(p, t)) {
-      if (dx > 0) p.x = t.x - p.w;
-      else if (dx < 0) p.x = t.x + t.w;
+      if (dx > 0) { p.x = t.x - p.w; p.touchingWall = true; p.wallSide = 1; }
+      else if (dx < 0) { p.x = t.x + t.w; p.touchingWall = true; p.wallSide = -1; }
       p.vx = 0;
     }
   });
@@ -135,20 +137,38 @@ function stepWorld(world, dt, input) {
   updateMovers(world, dt);
 
   const dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
-  p.vx = dir * MOVE_SPEED;
   if (dir !== 0) p.facing = dir;
+  // Duvar zıplaması itmesi kısa süre yatay kontrolü geçersiz kılar (arka arkaya
+  // duvara yapışıp tırmanmayı önler, temiz bir yay verir).
+  if (p.wallKickTime > 0) { p.wallKickTime -= dt; p.vx = p.wallKick; }
+  else { p.vx = dir * MOVE_SPEED; }
 
-  // Zıplama: jump buffer ile basış kısa süre hatırlanır (inişten hemen önce
-  // basınca da zıplar). Yerde/havada MAX_JUMPS'a kadar (çift zıplama).
+  // Zıplama / duvar zıplaması (jump buffer ile). Havada duvara yaslıyken zıplama
+  // duvardan uzağa iter; yoksa normal (yer/çift) zıplama.
   p.jumpBuffer = input.jump ? JUMP_BUFFER : Math.max(0, p.jumpBuffer - dt);
-  if (p.jumpBuffer > 0 && p.jumps < MAX_JUMPS) { p.vy = JUMP_VELOCITY; p.onGround = false; p.jumps += 1; p.jumpBuffer = 0; }
+  if (p.jumpBuffer > 0) {
+    if (!p.onGround && p.touchingWall) {
+      p.vy = JUMP_VELOCITY;
+      p.wallKick = -p.wallSide * MOVE_SPEED;
+      p.wallKickTime = WALL_KICK_TIME;
+      p.jumps = 1;
+      p.jumpBuffer = 0;
+      world.jumpCount = (world.jumpCount || 0) + 1;
+    } else if (p.jumps < MAX_JUMPS) {
+      p.vy = JUMP_VELOCITY; p.onGround = false; p.jumps += 1; p.jumpBuffer = 0;
+      world.jumpCount = (world.jumpCount || 0) + 1;
+    }
+  }
 
   p.vy += GRAVITY * dt;
   if (p.vy > MAX_FALL) p.vy = MAX_FALL;
 
   moveX(world, p.vx * dt);
   moveY(world, p.vy * dt);
-  if (p.onGround) p.jumps = 0; // yere inince zıplama hakkı yenilenir
+  if (p.onGround) { p.jumps = 0; p.wallKickTime = 0; }
+
+  // Duvara tutunma (wall slide): havada duvara yaslıyken düşme hızını sınırla.
+  if (!p.onGround && p.touchingWall && p.vy > WALL_SLIDE_SPEED) p.vy = WALL_SLIDE_SPEED;
 
   for (const c of world.coins) {
     if (!c.collected && aabb(p, c)) { c.collected = true; world.collected += 1; }

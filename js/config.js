@@ -24,6 +24,8 @@ const MAX_FALL = 960;
 const STOMP_BOUNCE = -420;    // düşmana basınca zıplama sekmesi
 const MAX_JUMPS = 2;          // çift zıplama (yerde 1 + havada 1)
 const JUMP_BUFFER = 0.12;     // inişten hemen önceki zıplama basışını hatırlama (sn)
+const WALL_SLIDE_SPEED = 130; // duvara yaslanınca düşme hızı sınırı (tutunma)
+const WALL_KICK_TIME = 0.18;  // duvar zıplamasında yatay itme süresi (sn)
 
 // Bölümler: platforms = katı dikdörtgenler [x,y,w,h]; coins = [x,y]; spawn =
 // başlangıç; goal = bitiş bayrağı sol-üstü. width/height bölüm sınırları.

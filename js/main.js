@@ -3,7 +3,7 @@
 (function () {
   let world, prog, paused = false, last = 0, deaths = 0;
   let els = {};
-  let prev = { collected: 0, stomps: 0, dead: false, won: false, jumps: 0 };
+  let prev = { collected: 0, stomps: 0, dead: false, won: false, jumpCount: 0 };
 
   function fmtTime(sec) {
     const m = Math.floor(sec / 60);
@@ -16,7 +16,7 @@
     world = createWorld(i);
     deaths = 0;
     paused = false;
-    prev = { collected: 0, stomps: 0, dead: false, won: false, jumps: 0 };
+    prev = { collected: 0, stomps: 0, dead: false, won: false, jumpCount: 0 };
     hideOverlay();
     buildLevelBar();
   }
@@ -105,9 +105,9 @@
       if (world.stomps > prev.stomps) { Sound.play('stomp'); Render.burst(cx, feet, '#b0413e', 10, { speed: 150, life: 0.4, r: 3 }); }
       if (world.dead && !prev.dead) { Sound.play('death'); Render.burst(cx, cy, '#4dd0e1', 14, { speed: 190, life: 0.6, r: 3 }); }
       if (world.won && !prev.won) { Sound.play('win'); Render.burst(cx, cy, '#f1c40f', 20, { speed: 200, life: 0.8, r: 3 }); }
-      if (pl.jumps > prev.jumps) { Sound.play('jump'); Render.burst(cx, feet, '#cdeeff', 5, { speed: 80, up: 40, life: 0.3, r: 2 }); }
+      if (world.jumpCount > prev.jumpCount) { Sound.play('jump'); Render.burst(cx, feet, '#cdeeff', 5, { speed: 80, up: 40, life: 0.3, r: 2 }); }
       prev.collected = world.collected; prev.stomps = world.stomps;
-      prev.dead = world.dead; prev.won = world.won; prev.jumps = pl.jumps;
+      prev.dead = world.dead; prev.won = world.won; prev.jumpCount = world.jumpCount;
       if (world.dead) { deaths++; respawn(world); }
       if (world.won) onWin();
     }
