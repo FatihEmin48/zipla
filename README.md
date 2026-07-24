@@ -4,6 +4,8 @@ Tarayıcıda oynanan bir **2D platform** oyunu. Koş, zıpla, coin'leri topla ve
 
 **Canlı oyna:** https://fatihemin48.github.io/zipla/
 
+**Uygulama olarak kur (PWA):** Tarayıcı menüsünden "Ana ekrana ekle" / "Uygulamayı yükle" ile ikonlu, tam ekran, **çevrimdışı** açılan bir uygulama olarak kurulur (telefonda yatay).
+
 ## Nasıl oynanır
 
 - **Klavye:** `←` `→` (ya da `A` `D`) hareket · `Boşluk` / `↑` / `W` zıpla · `R` bölümü yeniden başlat.
@@ -32,4 +34,4 @@ Saf oyun mantığı (`js/game.js`) DOM/canvas'tan bağımsızdır, bu yüzden No
 
 ## Sonraki sürümler (kapsam dışı)
 
-Daha fazla bölüm, çift zıplama, checkpoint, süre/yıldız derecesi, PWA, tutunma/tırmanma.
+Daha fazla bölüm, çift zıplama, checkpoint, süre/yıldız derecesi, tutunma/tırmanma.

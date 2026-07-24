@@ -126,5 +126,10 @@
 
     last = performance.now();
     requestAnimationFrame(loop);
+
+    // PWA: service worker (yüklenebilir + çevrimdışı). Desteklenmezse sessiz geçilir.
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+    }
   });
 })();
