@@ -29,7 +29,7 @@ function createWorld(levelIndex) {
     })),
     coins: L.coins.map(c => ({ x: c[0], y: c[1], w: COIN, h: COIN, collected: false })),
     goal: { x: L.goal[0], y: L.goal[1], w: GOAL_W, h: GOAL_H },
-    player: { x: L.spawn[0], y: L.spawn[1], vx: 0, vy: 0, w: PLAYER_W, h: PLAYER_H, onGround: false, facing: 1, jumps: 0 },
+    player: { x: L.spawn[0], y: L.spawn[1], vx: 0, vy: 0, w: PLAYER_W, h: PLAYER_H, onGround: false, facing: 1, jumps: 0, jumpBuffer: 0 },
     spawn: { x: L.spawn[0], y: L.spawn[1] },
     checkpoints: (L.checkpoints || []).map(x => ({ x: x, active: false })),
     checkpoint: { x: L.spawn[0], y: L.spawn[1] }, // aktif yeniden doğuş noktası
@@ -135,8 +135,10 @@ function stepWorld(world, dt, input) {
   p.vx = dir * MOVE_SPEED;
   if (dir !== 0) p.facing = dir;
 
-  // Çift zıplama: yerde/havada MAX_JUMPS'a kadar; her zıplama sayacı artırır.
-  if (input.jump && p.jumps < MAX_JUMPS) { p.vy = JUMP_VELOCITY; p.onGround = false; p.jumps += 1; }
+  // Zıplama: jump buffer ile basış kısa süre hatırlanır (inişten hemen önce
+  // basınca da zıplar). Yerde/havada MAX_JUMPS'a kadar (çift zıplama).
+  p.jumpBuffer = input.jump ? JUMP_BUFFER : Math.max(0, p.jumpBuffer - dt);
+  if (p.jumpBuffer > 0 && p.jumps < MAX_JUMPS) { p.vy = JUMP_VELOCITY; p.onGround = false; p.jumps += 1; p.jumpBuffer = 0; }
 
   p.vy += GRAVITY * dt;
   if (p.vy > MAX_FALL) p.vy = MAX_FALL;
