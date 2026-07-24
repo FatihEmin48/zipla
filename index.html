@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Zıpla!</title>
+<meta name="theme-color" content="#7ec8ff">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>🏃 Zıpla!</h1>
+    </header>
+
+    <div id="levelbar"></div>
+
+    <div id="hud">
+      <span id="hud-level">—</span>
+      <span id="hud-coins">🪙 0/0</span>
+      <span id="hud-time">⏱️ 0:00.00</span>
+    </div>
+
+    <div id="stage">
+      <canvas id="game" width="640" height="384"></canvas>
+      <div id="overlay" class="hidden"></div>
+    </div>
+
+    <div id="touch">
+      <div class="pad">
+        <button id="btn-left" class="tbtn">◀</button>
+        <button id="btn-right" class="tbtn">▶</button>
+      </div>
+      <div class="pad">
+        <button id="btn-restart" class="tbtn small">↻</button>
+        <button id="btn-jump" class="tbtn jump">⤴ ZIPLA</button>
+      </div>
+    </div>
+
+    <p class="hint">Klavye: <b>← →</b> hareket · <b>Boşluk / ↑</b> zıpla · <b>R</b> yeniden başlat. Tüm coin'leri topla ve 🚩 bayrağa ulaş!</p>
+
+    <footer>
+      <span>💾 İlerleme otomatik kaydedilir</span>
+    </footer>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
