@@ -37,4 +37,4 @@ Saf oyun mantığı (`js/game.js`) DOM/canvas'tan bağımsızdır, bu yüzden No
 
 ## Sonraki sürümler (kapsam dışı)
 
-Daha fazla bölüm, arka plan müziği, hareketli tehlikeler, güç-yükseltmeleri.
+Daha fazla bölüm, güç-yükseltmeleri, farklı temalar.

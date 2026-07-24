@@ -138,6 +138,15 @@
     soundBtn.addEventListener('click', () => { Sound.toggle(); syncSound(); });
     syncSound();
 
+    const musicBtn = document.getElementById('music-btn');
+    const syncMusic = () => { musicBtn.classList.toggle('off', !Music.isOn()); };
+    musicBtn.addEventListener('click', () => { Music.toggle(); syncMusic(); });
+    syncMusic();
+    // Autoplay politikası: müzik açıksa ilk etkileşimde başlat.
+    const kick = () => { Music.resumeIfOn(); window.removeEventListener('keydown', kick); window.removeEventListener('pointerdown', kick); };
+    window.addEventListener('keydown', kick);
+    window.addEventListener('pointerdown', kick);
+
     // Tam ekran + (destekleniyorsa) yatay kilitleme — telefonda yatay oynanış.
     document.getElementById('fs-btn').addEventListener('click', async () => {
       try {

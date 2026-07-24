@@ -1,7 +1,7 @@
 // Service worker: uygulama kabuğunu önbelleğe alır → çevrimdışı açılır, tekrar
 // açılışlar hızlanır. GitHub Pages alt yolunda çalışsın diye tüm yollar göreli.
 // Dosyaları güncelleyince CACHE sürümünü artır.
-const CACHE = 'zipla-v9';
+const CACHE = 'zipla-v10';
 const ASSETS = [
   './',
   './index.html',
@@ -13,6 +13,7 @@ const ASSETS = [
   './js/config.js',
   './js/game.js',
   './js/sound.js',
+  './js/music.js',
   './js/input.js',
   './js/render.js',
   './js/main.js',
