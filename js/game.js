@@ -28,6 +28,10 @@ function createWorld(levelIndex) {
       range: e.range, speed: e.speed, off: 0, dir: 1, alive: true, facing: -1,
       type: e.type || 'walker',
     })),
+    movingHazards: (L.movingHazards || []).map(m => ({
+      bx: m.x, by: m.y, x: m.x, y: m.y, w: m.w, h: m.h,
+      axis: m.axis || 'x', amp: m.amp, speed: m.speed, off: 0, dir: 1,
+    })),
     coins: L.coins.map(c => ({ x: c[0], y: c[1], w: COIN, h: COIN, collected: false })),
     goal: { x: L.goal[0], y: L.goal[1], w: GOAL_W, h: GOAL_H },
     player: { x: L.spawn[0], y: L.spawn[1], vx: 0, vy: 0, w: PLAYER_W, h: PLAYER_H, onGround: false, facing: 1, jumps: 0, jumpBuffer: 0, touchingWall: false, wallSide: 0, wallKick: 0, wallKickTime: 0 },
@@ -129,6 +133,20 @@ function updateEnemies(world, dt) {
   }
 }
 
+// Hareketli tehlikeler (testere): devriye gezer, değince öldürür (katı değil).
+function updateMovingHazards(world, dt) {
+  if (!world.movingHazards || !world.movingHazards.length) return;
+  const p = world.player;
+  for (const m of world.movingHazards) {
+    m.off += m.speed * dt * m.dir;
+    if (m.off >= m.amp) { m.off = m.amp; m.dir = -1; }
+    else if (m.off <= 0) { m.off = 0; m.dir = 1; }
+    m.x = m.bx + (m.axis === 'x' ? m.off : 0);
+    m.y = m.by + (m.axis === 'y' ? m.off : 0);
+    if (aabb(p, m)) world.dead = true;
+  }
+}
+
 // Bir fizik adımı. input: { left, right, jump } (jump = bu adımda zıplama isteği).
 function stepWorld(world, dt, input) {
   if (world.won || world.dead) return;
@@ -175,6 +193,7 @@ function stepWorld(world, dt, input) {
   }
 
   updateEnemies(world, dt);
+  updateMovingHazards(world, dt);
 
   // Tehlikeye (diken vb.) değme → ölüm.
   for (const h of world.hazards) { if (aabb(p, h)) { world.dead = true; break; } }

@@ -90,6 +90,28 @@ const Render = (function () {
     ctx.stroke();
   }
 
+  function drawSaw(m) {
+    const cx = m.x + m.w / 2, cy = m.y + m.h / 2, r = Math.max(m.w, m.h) / 2;
+    const rot = Date.now() / 120;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rot);
+    ctx.fillStyle = '#9aa7b3';
+    const teeth = 8;
+    ctx.beginPath();
+    for (let i = 0; i < teeth * 2; i++) {
+      const a = (i / (teeth * 2)) * Math.PI * 2;
+      const rr = (i % 2) ? r : r * 0.68;
+      const fn = i === 0 ? 'moveTo' : 'lineTo';
+      ctx[fn](Math.cos(a) * rr, Math.sin(a) * rr);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#5b6670';
+    ctx.beginPath(); ctx.arc(0, 0, r * 0.32, 0, 7); ctx.fill();
+    ctx.restore();
+  }
+
   function drawHazard(h) {
     const n = Math.max(1, Math.round(h.w / 16));
     const sw = h.w / n;
@@ -220,6 +242,7 @@ const Render = (function () {
     for (const t of world.platforms) drawPlatform(t);
     if (world.movers) for (const m of world.movers) drawMover(m);
     for (const h of world.hazards) drawHazard(h);
+    if (world.movingHazards) for (const m of world.movingHazards) drawSaw(m);
     if (world.checkpoints) for (const cp of world.checkpoints) drawCheckpoint(cp);
     if (world.enemies) for (const e of world.enemies) drawEnemy(e);
     drawGoal(world.goal, tsec);
