@@ -30,9 +30,11 @@
     const best = prog.best[world.level];
     const par = LEVELS[world.level].par;
     const stars = levelStars(world.level, world.time, world.collected, world.totalCoins);
+    const allDone = completedCount() === LEVELS.length;
     showOverlay(
       `<h2>🏁 Bölüm Tamam!</h2>` +
       `<div class="ov-stars">${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}</div>` +
+      (allDone ? `<div class="ov-done">🏆 Tüm bölümleri bitirdin! ⭐ ${totalStars()}/${3 * LEVELS.length}</div>` : '') +
       `<div class="ov-stat">⏱️ Süre: <b>${fmtTime(world.time)}</b> · hedef ${par}s ${world.time <= par ? '✓' : '✗'}</div>` +
       `<div class="ov-stat">🪙 Coin: <b>${world.collected}/${world.totalCoins}</b> ${world.collected >= world.totalCoins ? '✓' : ''}</div>` +
       `<div class="ov-stat">🥾 Düşman: <b>${world.stomps}</b></div>` +
@@ -51,6 +53,23 @@
   function showOverlay(html) { els.overlay.innerHTML = html; els.overlay.classList.remove('hidden'); }
   function hideOverlay() { els.overlay.classList.add('hidden'); }
 
+  function totalStars() {
+    let s = 0;
+    for (let i = 0; i < LEVELS.length; i++) s += (prog.best && prog.best[i] && prog.best[i].stars) || 0;
+    return s;
+  }
+  function completedCount() {
+    let c = 0;
+    for (let i = 0; i < LEVELS.length; i++) if (prog.best && prog.best[i]) c++;
+    return c;
+  }
+  function updateProgressLine() {
+    const s = totalStars(), max = 3 * LEVELS.length;
+    let txt = `⭐ ${s}/${max}`;
+    if (completedCount() === LEVELS.length) txt += (s === max ? ' · TÜM YILDIZLAR! 🏆' : ' · tüm bölümler bitti! 🎉');
+    els.progressLine.textContent = txt;
+  }
+
   function buildLevelBar() {
     const unlocked = unlockedLevel(prog);
     els.levelbar.innerHTML = '';
@@ -62,6 +81,7 @@
       if (i <= unlocked) b.addEventListener('click', () => startLevel(i));
       els.levelbar.appendChild(b);
     }
+    updateProgressLine();
   }
 
   function updateHUD() {
@@ -100,6 +120,7 @@
     els.canvas = document.getElementById('game');
     els.overlay = document.getElementById('overlay');
     els.levelbar = document.getElementById('levelbar');
+    els.progressLine = document.getElementById('progress-line');
     els.hudLevel = document.getElementById('hud-level');
     els.hudCoins = document.getElementById('hud-coins');
     els.hudDeaths = document.getElementById('hud-deaths');

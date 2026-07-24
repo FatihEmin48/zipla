@@ -71,6 +71,8 @@ header h1 { margin: 6px 0; font-size: 26px; color: var(--accent); letter-spacing
 .lvl-btn.locked { opacity: 0.5; cursor: default; }
 .lvl-stars { display: block; font-size: 9px; color: var(--gold); letter-spacing: -1px; }
 .ov-stars { font-size: 34px; color: var(--gold); letter-spacing: 4px; margin-bottom: 4px; }
+#progress-line { text-align: center; font-size: 13px; color: var(--gold); margin: 2px 0 4px; min-height: 16px; }
+.ov-done { color: var(--gold); font-weight: bold; font-size: 15px; margin-bottom: 4px; }
 
 #hud {
   display: flex; justify-content: space-between; gap: 8px;
