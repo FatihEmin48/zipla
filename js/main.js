@@ -3,7 +3,7 @@
 (function () {
   let world, prog, paused = false, last = 0, deaths = 0;
   let els = {};
-  let prev = { collected: 0, stomps: 0, dead: false, won: false, onGround: false };
+  let prev = { collected: 0, stomps: 0, dead: false, won: false, jumps: 0 };
 
   function fmtTime(sec) {
     const m = Math.floor(sec / 60);
@@ -16,7 +16,7 @@
     world = createWorld(i);
     deaths = 0;
     paused = false;
-    prev = { collected: 0, stomps: 0, dead: false, won: false, onGround: false };
+    prev = { collected: 0, stomps: 0, dead: false, won: false, jumps: 0 };
     hideOverlay();
     buildLevelBar();
   }
@@ -84,9 +84,9 @@
       if (world.stomps > prev.stomps) Sound.play('stomp');
       if (world.dead && !prev.dead) Sound.play('death');
       if (world.won && !prev.won) Sound.play('win');
-      if (!pl.onGround && prev.onGround && pl.vy < 0) Sound.play('jump');
+      if (pl.jumps > prev.jumps) Sound.play('jump');
       prev.collected = world.collected; prev.stomps = world.stomps;
-      prev.dead = world.dead; prev.won = world.won; prev.onGround = pl.onGround;
+      prev.dead = world.dead; prev.won = world.won; prev.jumps = pl.jumps;
       if (world.dead) { deaths++; respawn(world); }
       if (world.won) onWin();
     }

@@ -8,7 +8,7 @@ Tarayıcıda oynanan bir **2D platform** oyunu. Koş, zıpla, coin'leri topla ve
 
 ## Nasıl oynanır
 
-- **Klavye:** `←` `→` (ya da `A` `D`) hareket · `Boşluk` / `↑` / `W` zıpla · `R` bölümü yeniden başlat.
+- **Klavye:** `←` `→` (ya da `A` `D`) hareket · `Boşluk` / `↑` / `W` zıpla — havadayken bir kez daha basarsan **çift zıplama** · `R` bölümü yeniden başlat.
 - **Dokunmatik:** alttaki ◀ ▶ ve **ZIPLA** butonları.
 - Her bölümde **coin'leri topla** ve 🚩 **bitiş bayrağına** ulaş. Boşluğa düşersen ya da **dikenlere** ⚠️ değersen başa dönersin (ölüm sayısı üstte gösterilir).
 - **Düşmanlar** 👹 devriye gezer: **üstüne zıplarsan** onları yener ve sekersin; **yandan** değersen ölürsün.
@@ -34,4 +34,4 @@ Saf oyun mantığı (`js/game.js`) DOM/canvas'tan bağımsızdır, bu yüzden No
 
 ## Sonraki sürümler (kapsam dışı)
 
-Daha fazla bölüm, çift zıplama, checkpoint, tutunma/tırmanma.
+Daha fazla bölüm, checkpoint, tutunma/tırmanma.

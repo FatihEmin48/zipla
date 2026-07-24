@@ -29,7 +29,7 @@ function createWorld(levelIndex) {
     })),
     coins: L.coins.map(c => ({ x: c[0], y: c[1], w: COIN, h: COIN, collected: false })),
     goal: { x: L.goal[0], y: L.goal[1], w: GOAL_W, h: GOAL_H },
-    player: { x: L.spawn[0], y: L.spawn[1], vx: 0, vy: 0, w: PLAYER_W, h: PLAYER_H, onGround: false, facing: 1 },
+    player: { x: L.spawn[0], y: L.spawn[1], vx: 0, vy: 0, w: PLAYER_W, h: PLAYER_H, onGround: false, facing: 1, jumps: 0 },
     spawn: { x: L.spawn[0], y: L.spawn[1] },
     won: false,
     dead: false,
@@ -132,13 +132,15 @@ function stepWorld(world, dt, input) {
   p.vx = dir * MOVE_SPEED;
   if (dir !== 0) p.facing = dir;
 
-  if (input.jump && p.onGround) { p.vy = JUMP_VELOCITY; p.onGround = false; }
+  // Çift zıplama: yerde/havada MAX_JUMPS'a kadar; her zıplama sayacı artırır.
+  if (input.jump && p.jumps < MAX_JUMPS) { p.vy = JUMP_VELOCITY; p.onGround = false; p.jumps += 1; }
 
   p.vy += GRAVITY * dt;
   if (p.vy > MAX_FALL) p.vy = MAX_FALL;
 
   moveX(world, p.vx * dt);
   moveY(world, p.vy * dt);
+  if (p.onGround) p.jumps = 0; // yere inince zıplama hakkı yenilenir
 
   for (const c of world.coins) {
     if (!c.collected && aabb(p, c)) { c.collected = true; world.collected += 1; }
