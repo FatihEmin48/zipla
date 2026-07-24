@@ -117,4 +117,6 @@ header h1 { margin: 6px 0; font-size: 26px; color: var(--accent); letter-spacing
 .tbtn.jump { width: 130px; background: var(--accent); color: #0d2b31; }
 
 .hint { font-size: 12px; color: var(--muted); text-align: center; margin: 12px 4px 0; line-height: 1.5; }
-footer { margin-top: 14px; text-align: center; font-size: 12px; color: var(--muted); }
+footer { margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 12px; color: var(--muted); }
+#reset-prog { background: transparent; color: var(--muted); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 5px 10px; cursor: pointer; font-size: 12px; }
+#reset-prog:hover { color: #e57373; border-color: #e57373; }

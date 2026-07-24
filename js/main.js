@@ -133,6 +133,13 @@
     Input.bindButton(document.getElementById('btn-right'), 'right');
     Input.bindButton(document.getElementById('btn-jump'), 'jump');
     document.getElementById('btn-restart').addEventListener('click', () => startLevel(world.level));
+    document.getElementById('reset-prog').addEventListener('click', () => {
+      if (confirm('Tüm ilerlemen (açık bölümler ve yıldızlar) silinsin mi? Bu geri alınamaz.')) {
+        prog = {};
+        saveProgress(prog);
+        startLevel(0);
+      }
+    });
 
     const soundBtn = document.getElementById('sound-btn');
     const syncSound = () => { const on = Sound.isEnabled(); soundBtn.textContent = on ? '🔊' : '🔇'; soundBtn.classList.toggle('muted', !on); };
