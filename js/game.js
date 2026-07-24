@@ -32,6 +32,7 @@ function createWorld(levelIndex) {
       bx: m.x, by: m.y, x: m.x, y: m.y, w: m.w, h: m.h,
       axis: m.axis || 'x', amp: m.amp, speed: m.speed, off: 0, dir: 1,
     })),
+    powerups: (L.powerups || []).map(pu => ({ x: pu[0], y: pu[1], w: POWERUP, h: POWERUP, type: pu[2] || 'shield', taken: false })),
     coins: L.coins.map(c => ({ x: c[0], y: c[1], w: COIN, h: COIN, collected: false })),
     goal: { x: L.goal[0], y: L.goal[1], w: GOAL_W, h: GOAL_H },
     player: { x: L.spawn[0], y: L.spawn[1], vx: 0, vy: 0, w: PLAYER_W, h: PLAYER_H, onGround: false, facing: 1, jumps: 0, jumpBuffer: 0, touchingWall: false, wallSide: 0, wallKick: 0, wallKickTime: 0 },
@@ -44,8 +45,17 @@ function createWorld(levelIndex) {
     time: 0,
     collected: 0,
     stomps: 0,
+    invincible: 0, // kalkan kalan süre (sn)
+    shields: 0,    // toplanan kalkan sayısı (efekt/ses tetikleme için)
     totalCoins: L.coins.length,
   };
+}
+
+// Oyuncuya zarar verir; kalkan (invincible) aktifse ölmez. Dönüş: öldü mü.
+function hurt(world) {
+  if (world.invincible > 0) return false;
+  world.dead = true;
+  return true;
 }
 
 // Tüm katı zeminler (sabit platformlar + hareketli platformlar) üzerinde gez.
@@ -128,7 +138,7 @@ function updateEnemies(world, dt) {
     if (aabb(p, e)) {
       const stomp = p.vy > 0 && (p.y + p.h) <= e.y + e.h * 0.6;
       if (stomp) { e.alive = false; p.vy = STOMP_BOUNCE; p.onGround = false; world.stomps += 1; }
-      else { world.dead = true; }
+      else { hurt(world); }
     }
   }
 }
@@ -143,7 +153,7 @@ function updateMovingHazards(world, dt) {
     else if (m.off <= 0) { m.off = 0; m.dir = 1; }
     m.x = m.bx + (m.axis === 'x' ? m.off : 0);
     m.y = m.by + (m.axis === 'y' ? m.off : 0);
-    if (aabb(p, m)) world.dead = true;
+    if (aabb(p, m)) hurt(world);
   }
 }
 
@@ -153,6 +163,7 @@ function stepWorld(world, dt, input) {
   const p = world.player;
 
   updateMovers(world, dt);
+  if (world.invincible > 0) world.invincible = Math.max(0, world.invincible - dt);
 
   const dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
   if (dir !== 0) p.facing = dir;
@@ -195,8 +206,15 @@ function stepWorld(world, dt, input) {
   updateEnemies(world, dt);
   updateMovingHazards(world, dt);
 
-  // Tehlikeye (diken vb.) değme → ölüm.
-  for (const h of world.hazards) { if (aabb(p, h)) { world.dead = true; break; } }
+  // Güç-yükseltmesi (kalkan) topla.
+  if (world.powerups) {
+    for (const pu of world.powerups) {
+      if (!pu.taken && aabb(p, pu)) { pu.taken = true; world.invincible = SHIELD_TIME; world.shields = (world.shields || 0) + 1; }
+    }
+  }
+
+  // Tehlikeye (diken vb.) değme → ölüm (kalkan varsa korur).
+  for (const h of world.hazards) { if (aabb(p, h)) { hurt(world); break; } }
 
   // Checkpoint çizgisini geçince aktifleşir (yeniden doğuş noktası ilerler).
   if (world.checkpoints) {

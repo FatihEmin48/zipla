@@ -134,6 +134,29 @@ const Render = (function () {
     }
   }
 
+  function star(cx, cy, spikes, outer, inner) {
+    ctx.beginPath();
+    for (let i = 0; i < spikes * 2; i++) {
+      const a = -Math.PI / 2 + i * Math.PI / spikes;
+      const rr = (i % 2) ? inner : outer;
+      const fn = i === 0 ? 'moveTo' : 'lineTo';
+      ctx[fn](cx + Math.cos(a) * rr, cy + Math.sin(a) * rr);
+    }
+    ctx.closePath();
+  }
+
+  function drawPowerup(pu) {
+    if (pu.taken) return;
+    const cx = pu.x + pu.w / 2, cy = pu.y + pu.h / 2, r = pu.w / 2;
+    const bob = Math.sin(Date.now() / 300 + pu.x) * 3;
+    ctx.fillStyle = 'rgba(126,200,255,0.35)';
+    ctx.beginPath(); ctx.arc(cx, cy + bob, r + 4, 0, 7); ctx.fill();
+    ctx.fillStyle = '#7ec8ff';
+    star(cx, cy + bob, 5, r, r * 0.48); ctx.fill();
+    ctx.lineWidth = 1.5; ctx.strokeStyle = '#eaf3fb';
+    star(cx, cy + bob, 5, r, r * 0.48); ctx.stroke();
+  }
+
   function drawCoin(c, tsec) {
     const cx = c.x + c.w / 2, cy = c.y + c.h / 2;
     const bob = Math.sin(tsec * 4 + c.x * 0.05) * 2;
@@ -246,8 +269,17 @@ const Render = (function () {
     if (world.checkpoints) for (const cp of world.checkpoints) drawCheckpoint(cp);
     if (world.enemies) for (const e of world.enemies) drawEnemy(e);
     drawGoal(world.goal, tsec);
+    if (world.powerups) for (const pu of world.powerups) drawPowerup(pu);
     for (const c of world.coins) if (!c.collected) drawCoin(c, tsec);
     drawPlayer(world.player);
+    if (world.invincible > 0) {
+      const pp = world.player;
+      ctx.strokeStyle = 'rgba(126,200,255,' + (0.4 + 0.3 * Math.sin(Date.now() / 80)) + ')';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(pp.x + pp.w / 2, pp.y + pp.h / 2, pp.w * 0.9, 0, 7);
+      ctx.stroke();
+    }
     drawParticles();
     ctx.restore();
   }
